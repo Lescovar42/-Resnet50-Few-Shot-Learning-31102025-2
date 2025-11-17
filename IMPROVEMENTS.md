@@ -263,16 +263,65 @@ After the initial improvements, a second round of polish was applied:
 - **Code quality enhancements**: 3
 - **Error handling improvements**: 1
 
+## Implementation Fixes (Round 3)
+
+After polishing code quality, a third round focused on fixing implementation issues:
+
+### API & Compatibility Fixes (1)
+1. **Updated deprecated PyTorch API** - Changed `pretrained=True` to modern `weights=ResNet50_Weights.IMAGENET1K_V1` API (Cell 14)
+   - Old: `models.resnet50(pretrained=pretrained)`
+   - New: `models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V1 if pretrained else None)`
+   - Ensures compatibility with PyTorch 1.13+
+
+### Bug Fixes (2)
+1. **Fixed ensure_path interactive input** - Replaced `input()` call with `auto_remove` parameter (Cell 3)
+   - Issue: Interactive prompts don't work in Kaggle notebooks or automated environments
+   - Fix: Added `auto_remove=True` parameter for non-interactive operation
+
+2. **Fixed GaussianNoise inconsistent std** - Made forward() use self.std by default (Cell 3)
+   - Issue: `__init__` sets std=0.05 but `forward()` defaulted to 0.15
+   - Fix: Changed `def forward(self, x, std=None)` with `std = self.std if std is None`
+
+### Code Clarity (4)
+1. **Improved perturb() function** - Refactored for better readability (Cell 3)
+   - Replaced magic numbers with descriptive variable `augmentation_type`
+   - Added clearer comments for each transformation type
+   - Emphasized that function doubles batch size
+
+2. **Added shot_num calculation comment** - Explained 1-shot augmentation logic (Cell 27)
+   - `# For 1-shot, augment to 2 samples using flip; otherwise use shot count as-is`
+
+3. **Added cell dependency warning** - Warned about execution order requirements (Cell 20)
+   - Added `# NOTE: This cell depends on all_paths from the previous cell`
+
+4. **Added hardcoded path note** - Documented demo vs production usage (Cell 21)
+   - `# NOTE: Using hardcoded path for demo - production code should use args['data-path']`
+
+### Dead Code Removal (1)
+1. **Commented out clone_state_dict** - Unused function marked as dead code (Cell 3)
+
+### Documentation (1)
+1. **Added pprint wrapper docstring** - Documented utility function (Cell 3)
+
+### Summary of Round 3
+- **Total fixes**: 9
+- **API compatibility fixes**: 1
+- **Bug fixes**: 2
+- **Code clarity improvements**: 4
+- **Dead code removal**: 1
+- **Documentation**: 1
+
 ## Final Summary
 
-### Combined Totals
-- **Total improvements across both rounds**: 38
-- **Critical bugs fixed**: 3
-- **Docstrings added**: 22
+### Combined Totals Across All Rounds
+- **Total improvements**: 47
+- **Critical bugs fixed**: 5 (missing F import, empty data path, duplicate code, ensure_path input, GaussianNoise std)
+- **API/compatibility fixes**: 1 (PyTorch deprecated API)
+- **Docstrings added**: 23
 - **Type hints added**: 9
-- **Comments improved**: 12
+- **Comments improved**: 16
 - **Named constants introduced**: 3
-- **Dead code removed**: 2
+- **Dead code removed**: 3
 - **Error handling enhancements**: 3
 - **Model implementation changes**: 0 ✅
 
